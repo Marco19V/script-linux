@@ -26,7 +26,16 @@ fi
 
 scrivi_log "INIZIO PROCESSO DI BACKUP"
 
-scrivi_log "compressine in corso nella terra di mezzo"
+dimensione_sorgente=$(du -sk "$ORIGINE" | cut -f1)
+spazio_disponibile_terra=$(df -k "$TERRA_DI_MEZZO" | tail -1 | awk '{print $4}')
+
+if [ "$dimensione_sorgente" -gt "$spazio_disponibile_terra" ]; then
+  scrivi_log "ERRORE CRITICO: Spazio insufficiente nella Terra di Mezzo."
+  echo "Errore: Spazio insufficiente nella Terra di Mezzo."
+  exit 1
+fi
+
+scrivi_log "Compressione in corso nella Terra di Mezzo"
 tar -czf "$TERRA_DI_MEZZO/$NOME_FILE" "$ORIGINE" 2>> "$LOG_FILE"
 
 
